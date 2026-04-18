@@ -454,7 +454,7 @@ $$('a[href^="mailto:"]').forEach(function(el){
     // Футер — ИНН и название компании
     $$('.footer-bottom div:first-child').forEach(function(el){
         if(el.textContent.includes('ИП')){
-            el.innerHTML='© 2024–2025 Крюпоинт. '+c.legalName+' · ИНН&nbsp;'+c.inn+' · ОГРН&nbsp;'+c.ogrn+' · КПП&nbsp;'+c.kpp+'<br><span style="font-size:.7em;opacity:.6">'+c.legalAddress+'</span>';
+            el.innerHTML='© 2024–2026 CrewPoint. '+c.legalName+' · ИНН&nbsp;'+c.inn+' · ОГРН&nbsp;'+c.ogrn+' · КПП&nbsp;'+c.kpp+'<br><span style="font-size:.7em;opacity:.6">'+c.legalAddress+'</span>';
         }
     });
 
