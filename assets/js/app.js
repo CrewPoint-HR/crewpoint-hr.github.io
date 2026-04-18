@@ -115,7 +115,6 @@ function showFormError(){
 }
 
 var formSubmitBtn=$('#formSubmitBtn');
-var formSubmitBtn=$('#formSubmitBtn');
 if(formSubmitBtn){
     formSubmitBtn.addEventListener('click',function(){
 
