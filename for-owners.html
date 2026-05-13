@@ -288,7 +288,16 @@
 <div class="sheet-toast" id="sheetToast"></div>
 
 <div class="sticky-bar" id="stickyBar"><button class="btn btn--outline" id="stickyContact">Связаться</button><a href="https://t.me/DXBiller" target="_blank" rel="noopener noreferrer" class="btn btn--tg">Написать в Telegram</a></div>
-
+<style>
+  /* Фикс для устройств с отключенной анимацией в ОС */
+  @media (prefers-reduced-motion: reduce) {
+    .sheet:not(.open) {
+      opacity: 0 !important;
+      transform: translateY(100%) !important;
+      pointer-events: none !important;
+    }
+  }
+</style>
 <script src="assets/js/config.js"></script>
 <script src="assets/js/app.js" defer></script>
 </body>
