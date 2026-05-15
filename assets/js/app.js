@@ -39,7 +39,7 @@ function unlockScroll(){scrollLocks--;if(scrollLocks<=0){scrollLocks=0;document.
 // SCROLL
 // ══════════════════════════════════════
 
-window.addEventListener('scroll',function(){if(ticking)return;ticking=true;requestAnimationFrame(function(){var y=window.scrollY;if(header)header.classList.toggle('scrolled',y>80);if(floatingCta)floatingCta.classList.toggle('visible',y>600);if(contactTrigger)contactTrigger.classList.toggle('visible',y>400);if(floatingB2B)floatingB2B.classList.toggle('hidden',y>500);if(stickyBar){var show=y>400;if(show&&formSection){var rect=formSection.getBoundingClientRect();if(rect.top<window.innerHeight&&rect.bottom>0)show=false;}stickyBar.classList.toggle('visible',show);}ticking=false;});});
+window.addEventListener('scroll',function(){if(ticking)return;ticking=true;requestAnimationFrame(function(){var y=window.scrollY;if(header)header.classList.toggle('scrolled',y>80);if(floatingCta)floatingCta.classList.toggle('visible',y>600);if(contactTrigger)contactTrigger.classList.toggle('visible',y>400);if(floatingB2B)floatingB2B.classList.toggle('hidden',y>500);if(stickyBar){var show=y>400;if(show&&formSection){var rect=formSection.getBoundingClientRect();if(rect.top<window.innerHeight&&rect.bottom>0)show=false;}stickyBar.classList.toggle('visible',show);}ticking=false;});},{passive:true});
 
 // ══════════════════════════════════════
 // MOBILE MENU
@@ -414,47 +414,54 @@ window.addEventListener('load',function(){$$('.reveal').forEach(function(e){if(!
 // ══════════════════════════════════════
 function applyConfig(){
     var c=window.CREWPOINT;if(!c)return;
+    var isOwners=window.location.pathname.indexOf('for-owners')!==-1;
+    var phone=isOwners?c.phoneOwner:c.phone;
+    var phoneDisplay=isOwners?c.phoneOwnerDisplay:c.phoneDisplay;
+    var tg=isOwners?c.tgOwner:c.tg;
+    var wa=isOwners?c.waOwner:c.wa;
+    var waText=isOwners?c.waOwner:c.waText;
 
     // Телефоны — ссылки href
     $$('a[href^="tel:"]').forEach(function(el){
-        el.href='tel:'+c.phone;
-        if(el.textContent.trim().startsWith('+'))el.textContent=c.phoneDisplay;
+        el.href='tel:'+phone;
+        if(el.textContent.trim().startsWith('+'))el.textContent=phoneDisplay;
     });
 
-    // Email — ссылки href + защита от скрейперов (data-атрибут вместо прямого href)
-$$('a[href^="mailto:"]').forEach(function(el){
-    var parts=c.email.split('@');
-    el.removeAttribute('href');
-    el.dataset.u=parts[0];
-    el.dataset.d=parts[1];
-    el.style.cursor='pointer';
-    if(el.textContent.includes('@'))el.textContent=c.email;
-    el.addEventListener('click',function(){
-        window.location.href='mailto:'+el.dataset.u+'@'+el.dataset.d;
+    // Email — защита от скрейперов
+    $$('a[href^="mailto:"]').forEach(function(el){
+        var parts=c.email.split('@');
+        el.removeAttribute('href');
+        el.dataset.u=parts[0];
+        el.dataset.d=parts[1];
+        el.style.cursor='pointer';
+        if(el.textContent.includes('@'))el.textContent=c.email;
+        el.addEventListener('click',function(){
+            window.location.href='mailto:'+el.dataset.u+'@'+el.dataset.d;
+        });
     });
-});
 
     // WhatsApp
     $$('a[href*="wa.me"]').forEach(function(el){
         var hasText=el.href.includes('text=');
-        el.href=hasText?c.waText:c.wa;
+        el.href=hasText?waText:wa;
     });
 
-    // Telegram crewpoint
-    $$('a[href*="t.me/crewpoint"]').forEach(function(el){
-        el.href=c.tg;
-    });
+    // Telegram
+    if(isOwners){
+        $$('a[href*="t.me/"]').forEach(function(el){
+            var h=el.getAttribute('href')||'';
+            if(h.indexOf('DXBiller')!==-1||h.indexOf('DXLR24')!==-1)el.href=tg;
+        });
+    }else{
+        $$('a[href*="t.me/crewpoint"],a[href*="t.me/CrewPoint"]').forEach(function(el){
+            el.href=tg;
+        });
+    }
 
-    // Telegram owner
-    $$('a[href*="t.me/DXBiller"]').forEach(function(el){
-        el.href=c.tgOwner;
-    });
-
-    // Футер — ИНН и название компании
+    // Динамический год в футере
+    var yr=new Date().getFullYear();
     $$('.footer-bottom div:first-child').forEach(function(el){
-        if(el.textContent.includes('ИП')){
-            el.innerHTML='© 2024–2026 CrewPoint. '+c.legalName+' · ИНН&nbsp;'+c.inn+' · ОГРН&nbsp;'+c.ogrn+' · КПП&nbsp;'+c.kpp+'<br><span style="font-size:.7em;opacity:.6">'+c.legalAddress+'</span>';
-        }
+        el.innerHTML=el.innerHTML.replace(/(\d{4})(?:&ndash;|–|&#8211;|\u2013)(\d{4})/g,function(m,y1){return y1+'\u2013'+yr;});
     });
 
     // sheet-util — email текст
@@ -466,7 +473,7 @@ $$('a[href^="mailto:"]').forEach(function(el){
     $$('[data-copy]').forEach(function(el){
         var val=el.dataset.copy;
         if(val&&val.includes('@'))el.dataset.copy=c.email;
-        if(val&&val.startsWith('+'))el.dataset.copy=c.phone;
+        if(val&&val.startsWith('+'))el.dataset.copy=phone;
     });
 }
 
