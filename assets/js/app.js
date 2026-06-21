@@ -1,5 +1,5 @@
 /*!
- * CrewPoint — crewpoint.ru
+ * CrewPoint — crewpoint-hr.github.io
  * Copyright (c) 2024-2025. All rights reserved.
  */
 (function(){
@@ -193,7 +193,8 @@ applyPhoneMask($('#formPhone'));
 // SCROLL REVEAL
 // ══════════════════════════════════════
 
-function initReveal(){var els=$$('.reveal');if(!('IntersectionObserver' in window)){els.forEach(function(e){e.classList.add('visible');});return;}var obs=new IntersectionObserver(function(entries){entries.forEach(function(en){if(en.isIntersecting){en.target.classList.add('visible');obs.unobserve(en.target);}});},{threshold:0.01});els.forEach(function(e){obs.observe(e);});setTimeout(function(){els.forEach(function(e){if(!e.classList.contains('visible'))e.classList.add('visible');});},4000);}
+function revealVisibleFallback(){var buffer=140,viewH=window.innerHeight||document.documentElement.clientHeight;$$('.reveal').forEach(function(e){if(e.classList.contains('visible'))return;var rect=e.getBoundingClientRect();if(rect.top<viewH+buffer&&rect.bottom>-buffer)e.classList.add('visible');});}
+function initReveal(){var els=$$('.reveal');if(!('IntersectionObserver' in window)){els.forEach(function(e){e.classList.add('visible');});return;}var obs=new IntersectionObserver(function(entries){entries.forEach(function(en){if(en.isIntersecting){en.target.classList.add('visible');obs.unobserve(en.target);}});},{threshold:0.01});els.forEach(function(e){obs.observe(e);});setTimeout(revealVisibleFallback,4000);}
 
 // ══════════════════════════════════════
 // COHORTS
@@ -253,7 +254,7 @@ $$('.sheet-util-btn[data-copy]').forEach(function(btn){btn.addEventListener('cli
     mainToggle.addEventListener('click',function(){mainToggle.classList.toggle('active');hiddenContent.classList.toggle('open');mainToggle.querySelector('span').textContent=hiddenContent.classList.contains('open')?'Свернуть':'Подробнее';});
     if(condToggle&&conditions)condToggle.addEventListener('click',function(){condToggle.classList.toggle('active');conditions.classList.toggle('open');});
     if(!shareBtn)return;
-    var brochureUrl='assets/images/crewpoint-brochure.png',shareText='Карьера в море за 1 месяц. Документы за 14 дней, подбор контракта, зарплата от 150 000 ₽/мес. Мне помогли — рекомендую.',shareUrl='https://dxlr24.github.io/crewpoint/',shareBtnOrigHTML=shareBtn.innerHTML;
+    var brochureUrl='assets/images/crewpoint-brochure.png',shareText='Карьера в море за 1 месяц. Документы за 14 дней, подбор контракта, зарплата от 150 000 ₽/мес. Мне помогли — рекомендую.',shareUrl='https://crewpoint-hr.github.io/',shareBtnOrigHTML=shareBtn.innerHTML;
     shareBtn.addEventListener('click',function(){if(navigator.share)tryShareWithFile();else{copyToClipboard(shareText+'\n'+shareUrl);showShareFeedback();}});
     function tryShareWithFile(){fetch(brochureUrl).then(function(r){if(!r.ok)throw new Error();return r.blob();}).then(function(blob){var file=new File([blob],'CrewPoint-буклет.png',{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[file]}))return navigator.share({text:shareText,url:shareUrl,files:[file]});return shareTextOnly();}).catch(function(err){if(err.name!=='AbortError')shareTextOnly();});}
     function shareTextOnly(){return navigator.share({title:'CrewPoint — карьера в море',text:shareText,url:shareUrl}).catch(function(){});}
@@ -407,7 +408,7 @@ var calcCtaSheet=$('#calcCtaSheet');if(calcCtaSheet)calcCtaSheet.addEventListene
 
 function init(){applyConfig();initReveal();initOnlineStatus();renderCohorts();renderSeasonTimer();calculateFromChips();initGlow();initCounters();initAmbientBlobs();initTilt();initNavHighlight();initRipple();setInterval(function(){var box=$('#seasonBox');if(!box)return;renderSeasonTimer();},60000);}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
-window.addEventListener('load',function(){$$('.reveal').forEach(function(e){if(!e.classList.contains('visible'))e.classList.add('visible');});});
+window.addEventListener('load',revealVisibleFallback);
 
 // ══════════════════════════════════════
 // APPLY CONFIG — подставляет контакты из config.js

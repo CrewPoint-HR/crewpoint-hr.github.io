@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://crewpoint.ru/sitemap.xml
+Sitemap: https://crewpoint-hr.github.io/sitemap.xml
